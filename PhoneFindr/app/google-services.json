@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "753747182589",
+    "firebase_url": "https://phonefindr-39f72.firebaseio.com",
+    "project_id": "phonefindr-39f72",
+    "storage_bucket": "phonefindr-39f72.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:753747182589:android:b520dbfbbec6977e",
+        "android_client_info": {
+          "package_name": "com.example.edwin.phonefindr"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "753747182589-mbo9kam5mh4kfjke5ihnk1rt5r0uc4bn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCL0bPoTAZX2z1oEEsxEnpltjkUoih5JMg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

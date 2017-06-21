@@ -46,9 +46,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:background="#051467"
+            android:textStyle="bold"
             android:textColor="#ffffff"
             android:id="@+id/loginButton"
-            android:text="Login"
+            android:text="LOGIN"
             />
 
         <TextView

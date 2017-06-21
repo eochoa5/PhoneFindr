@@ -17,7 +17,6 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:titleTextColor="#7EE100"
             app:titleTextAppearance="@style/ActionBar.nameText"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 

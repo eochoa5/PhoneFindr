@@ -22,4 +22,9 @@
         <item name="android:textSize">20sp</item>
     </style>
 
+    <style name="ActionBar.nameText2" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
 </resources>
