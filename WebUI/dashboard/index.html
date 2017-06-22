@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+ 
+<title>Dashboard</title>
+
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.1.2/firebase.js"></script>
+<script type="text/javascript">
+	
+	var config = {
+    apiKey: "AIzaSyA_yDgR6Ru2hVlCPT86y1FKH2Jx2HI0PGc",
+    authDomain: "phonefindr-39f72.firebaseapp.com",
+    databaseURL: "https://phonefindr-39f72.firebaseio.com",
+    projectId: "phonefindr-39f72",
+    storageBucket: "phonefindr-39f72.appspot.com",
+    messagingSenderId: "753747182589"
+  };
+  firebase.initializeApp(config);
+
+  var email;
+
+  firebase.auth().onAuthStateChanged(function(user) {
+  
+  if (user) {
+  	email = user.email;
+    
+    $('#userDiv').html('Logged in: ' + email);
+    
+  } 
+  else{
+  	window.location.href = "/";
+  }
+
+});
+
+  function logOut(){
+  	firebase.auth().signOut().then(function() {
+  		window.location.href = "/";
+	}).catch(function(error) {
+ 		 // An error happened.
+	});
+
+
+  }
+
+</script>
+
+
+</head>
+<body>
+  <div id="userDiv"></div>
+  <button onclick="logOut()">log out</button>
+</body>
+</html>
