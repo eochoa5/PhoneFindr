@@ -11,10 +11,10 @@ app.get('/', function(req, res){
 app.use(express.static(__dirname));
 
 io.on('connection', function(socket){
-	console.log('a user connected: ' + socket.id);
+	console.log('a user has connected: ' + socket.id);
 
 	socket.on('disconnect', function(){
-		console.log('a user disconnected: ' + socket.id);
+		console.log('a user has disconnected: ' + socket.id);
 	});
 
 });
