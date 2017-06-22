@@ -2,12 +2,17 @@ package com.example.edwin.phonefindr;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,6 +43,20 @@ public class ActivityLoggedIn extends AppCompatActivity {
 
         TextView username = (TextView)findViewById(R.id.username);
         username.setText(user);
+        TextView welcomeMessage = (TextView) findViewById(R.id.welcomeMessage);
+        String instructions = "This app will help you find your phone. Go to site.com and " +
+                "sign in and you will be able to make your phone ring and see its location in the map. ";
+        //welcomeMessage.setText("Welcome "+user + "\n\n" + instructions);
+
+        String content = "Welcome "+user + "\n\n" + instructions ;
+
+        SpannableStringBuilder str = new SpannableStringBuilder(content);
+        int startPos = content.indexOf("site.com");
+        str.setSpan(new ForegroundColorSpan(Color.RED),
+                startPos, startPos+8, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        welcomeMessage.setText(str);
+
+
 
     }
 

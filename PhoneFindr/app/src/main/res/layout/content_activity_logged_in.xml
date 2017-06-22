@@ -12,4 +12,15 @@
     tools:context="com.example.edwin.phonefindr.ActivityLoggedIn"
     tools:showIn="@layout/activity_logged_in">
 
+    <TextView
+        android:id="@+id/welcomeMessage"
+        android:layout_width="match_parent"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:textColor="#000000"
+        android:textAlignment="center"
+        android:layout_height="wrap_content"
+        android:text=""
+        />
+
 </RelativeLayout>
