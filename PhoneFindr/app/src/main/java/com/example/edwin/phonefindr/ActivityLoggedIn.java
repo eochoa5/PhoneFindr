@@ -1,9 +1,13 @@
 package com.example.edwin.phonefindr;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +25,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.io.FileInputStream;
+import java.io.IOException;
 
 public class ActivityLoggedIn extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
@@ -46,7 +54,6 @@ public class ActivityLoggedIn extends AppCompatActivity {
         TextView welcomeMessage = (TextView) findViewById(R.id.welcomeMessage);
         String instructions = "This app will help you find your phone. Go to site.com and " +
                 "sign in and you will be able to make your phone ring and see its location in the map. ";
-        //welcomeMessage.setText("Welcome "+user + "\n\n" + instructions);
 
         String content = "Welcome "+user + "\n\n" + instructions ;
 
@@ -57,8 +64,21 @@ public class ActivityLoggedIn extends AppCompatActivity {
         welcomeMessage.setText(str);
 
 
+        MediaPlayer mPlayer = MediaPlayer.create(ActivityLoggedIn.this, R.raw.sound);
+        /* loop sound and force to play on speakers at max volume
+
+        AudioManager audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+       audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
+        audioManager.setMode(AudioManager.MODE_IN_CALL);
+       audioManager.setSpeakerphoneOn(true);
+        mPlayer.setLooping(true);
+
+        */
+
+        mPlayer.start();
 
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -66,6 +86,7 @@ public class ActivityLoggedIn extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
+
 
     @Override
        public boolean onOptionsItemSelected(MenuItem item) {

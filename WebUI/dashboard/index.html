@@ -22,15 +22,27 @@
   };
   firebase.initializeApp(config);
 
-  var email;
+  var email, socket;
 
   firebase.auth().onAuthStateChanged(function(user) {
   
   if (user) {
   	email = user.email;
+
+  	$('#userDiv').html('Logged in: ' + email);
+
+  	socket = io.connect();
     
-    $('#userDiv').html('Logged in: ' + email);
+    socket.emit('new user', email);
+
+    /* temp this will go on the Android side*/
+   socket.on('ring request', function(data){
+   			$('#tempDiv').html('PHONE RING REQUESTED');
+				
+				
+			});
     
+      
   } 
   else{
   	window.location.href = "/";
@@ -48,21 +60,28 @@
 
   }
 
-</script>
+  function makeRing(){
+  	socket.emit('ring', email);
 
-<script type="text/javascript">
-
-    var socket = io.connect();
-    console.log("This portion works");
-
+  }
 
 
 
 </script>
+
 
 </head>
 <body>
   <div id="userDiv"></div>
+
+<div style="margin-left: 5%">
+  <br>
   <button onclick="logOut()">log out</button>
+   <br><br>
+  <button onclick="makeRing()">Make it Ring</button>
+  </div>
+  <br>
+  <div id="tempDiv" style="font-weight: bold; color:red; font-size: 24px;"></div>
+
 </body>
 </html>
