@@ -11,16 +11,52 @@ app.get('/', function(req, res){
 
 });
 
+users = [];
+
 app.use(express.static(__dirname));
 //drew2g 6/23 ===============================
 //push socket to connection array and console log it
 //===========================================
 
 io.on('connection', function(socket){
+// <<<<<<< WebUI
 	connections.push(socket);
 	console.log('[C] %s sockets connected. New user %s', connections.length, socket.id);
+//=======
+
+// 	console.log('a user has connected: ' + socket.id);
+// >>>>>>> master
+
+
+	socket.on('new user', function(data){
+		socket.email = data;
+		users.push(socket);
+
+		/*
+		console.log("USERS: " );
+
+		for(i=0 ; i<users.length; i++){
+			console.log("email : " + users[i].email + " id: " + users[i].id);
+
+		}
+		*/
+		
+		
+	});
+
+	socket.on('ring', function(data){
+		
+		for(i=0 ; i<users.length; i++){
+			if(users[i].email == data && users[i].id != socket.id){
+
+				io.to(users[i].id).emit('ring request', socket.id);
+			}
+
+		}
+	});
 
 	socket.on('disconnect', function(){
+// <<<<<<< WebUI
 		console.log('[D] User %s has disconnected', socket.id);
 	});
 
@@ -32,6 +68,12 @@ io.on('connection', function(socket){
 		callback(true);
 		socket.email = email;
 		users.push(socket.email);
+// =======
+
+// 		console.log('a user has disconnected: ' + socket.id);
+
+		users.splice(users.indexOf(socket), 1);
+// >>>>>>> master
 	});
 
 });
