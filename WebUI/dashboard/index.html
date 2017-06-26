@@ -28,19 +28,23 @@
   
   if (user) {
   	email = user.email;
+// <<<<<<< WebUI
+//drew2g 6/23 ===============================
+//emit the 'new user' socket.on method in index.js, using this function to pass the email address and another function as a callback
+//===========================================
+    socket.emit('new user', email ,function(data){
 
-  	$('#userDiv').html('Logged in: ' + email);
+              if(data){
+              localStorage.email = email; //t
+            }
+          })
 
-  	socket = io.connect();
-    
-    socket.emit('new user', email);
 
-    /* temp this will go on the Android side*/
-   socket.on('ring request', function(data){
-   			$('#tempDiv').html('PHONE RING REQUESTED');
-				
-				
-			});
+    $('#userDiv').html('Logged in: ' + email);
+// =======
+
+   
+// >>>>>>> master
     
       
   } 
@@ -59,6 +63,31 @@
 
 
   }
+
+</script>
+
+<script type="text/javascript">
+
+    var socket = io.connect();
+    
+
+    socket.on('new user', function(data, callback){
+    if(users.indexOf(data) != -1){
+      callback(false);
+      return;
+    }
+      
+      /* temp this will go on the Android side*/
+      socket.on('ring request', function(data){
+   			$('#tempDiv').html('PHONE RING REQUESTED');
+				
+				
+			});
+    
+    callback(true);
+    socket.username = data;
+    users.push(socket.username);
+  });
 
   function makeRing(){
   	socket.emit('ring', email);

@@ -30,6 +30,7 @@ $('.form-control').keypress(function(){
 
     var email = $('#email').val();
     var pass = $('#password').val();
+  
       
       firebase.auth().signInWithEmailAndPassword(email, pass).catch(function(error) {
   
