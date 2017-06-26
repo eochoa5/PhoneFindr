@@ -76,7 +76,7 @@ public class ActivityLoggedIn extends AppCompatActivity {
         */
 
         mPlayer.start();
-        
+
     }
 
 
