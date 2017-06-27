@@ -28,9 +28,26 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URISyntaxException;
+
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
+
 
 public class ActivityLoggedIn extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
+
+    private Socket socket;
+    {
+        try{
+            socket = IO.socket("http://10.85.55.135:3000");
+
+        }catch(URISyntaxException e){
+            throw new RuntimeException(e);
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,8 +80,23 @@ public class ActivityLoggedIn extends AppCompatActivity {
                 startPos, startPos+8, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         welcomeMessage.setText(str);
 
+        socket.connect();
+        socket.emit("new user", email);
+        socket.on("ring request", makeRing);
 
-        MediaPlayer mPlayer = MediaPlayer.create(ActivityLoggedIn.this, R.raw.sound);
+
+
+    }
+
+    private Emitter.Listener makeRing = new Emitter.Listener(){
+        @Override
+        public void call(final Object... args){
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                    System.out.println("RING REQUEST RECEIVED");
+                    //MediaPlayer mPlayer = MediaPlayer.create(ActivityLoggedIn.this, R.raw.sound);
         /* loop sound and force to play on speakers at max volume
 
         AudioManager audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
@@ -75,9 +107,11 @@ public class ActivityLoggedIn extends AppCompatActivity {
 
         */
 
-        mPlayer.start();
-
-    }
+                    //mPlayer.start();
+                }
+            });
+        }
+    };
 
 
     @Override
@@ -114,6 +148,12 @@ public class ActivityLoggedIn extends AppCompatActivity {
 
             return super.onOptionsItemSelected(item);
             }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        socket.disconnect();
+    }
 
 
 }
