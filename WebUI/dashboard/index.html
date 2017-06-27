@@ -3,11 +3,14 @@
 <head>
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/favicon.ico" type="image/x-icon">
- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> --> 
+ <link rel="stylesheet" href="https://bootswatch.com/spacelab/bootstrap.min.css">
+
+
  
 <title>Dashboard</title>
 
-<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/4.1.2/firebase.js"></script>
 <script src="/socket.io/socket.io.js"></script> 
 <script type="text/javascript">
@@ -40,7 +43,9 @@
           })
 
 
-    $('#userDiv').html('Logged in: ' + email);
+    $('#userDiv').html('Hello, \n' + email);
+    $('#userDiv').css('color','white');
+
 // =======
 
    
@@ -95,22 +100,26 @@
   }
 
 
+$(document).ready(function() {
+    $(".dropdown-toggle").dropdown();
+});
+
 
 </script>
 
 
 </head>
+  <header style="height:4.5em;background-color:grey;">
+  <div id ="topBar" style="float:right">
+      <div id="userDiv">
+      </div>
+      <button onclick="logOut()" class="btn btn-default">Log Out</button>
+      <button onclick="makeRing()" class="btn btn-default">Make it Ring</button>
+      <div id="tempDiv" style="font-weight: bold; color:red; font-size: 24px;">
+      </div>
+    </div>
+  </header>
 <body>
-  <div id="userDiv"></div>
-
-<div style="margin-left: 5%">
-  <br>
-  <button onclick="logOut()">log out</button>
-   <br><br>
-  <button onclick="makeRing()">Make it Ring</button>
-  </div>
-  <br>
-  <div id="tempDiv" style="font-weight: bold; color:red; font-size: 24px;"></div>
-
+  <h1 style="clear:both;text-align:center;margin:.4em;">Android Phone Finder</h1>
 </body>
 </html>
