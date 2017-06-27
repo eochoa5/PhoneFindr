@@ -41,7 +41,7 @@ public class ActivityLoggedIn extends AppCompatActivity {
     private Socket socket;
     {
         try{
-            socket = IO.socket("http://10.85.55.135:3000");
+            socket = IO.socket("http://192.168.1.172:3000");
 
         }catch(URISyntaxException e){
             throw new RuntimeException(e);
@@ -95,19 +95,15 @@ public class ActivityLoggedIn extends AppCompatActivity {
                 @Override
                 public void run() {
 
-                    System.out.println("RING REQUEST RECEIVED");
-                    //MediaPlayer mPlayer = MediaPlayer.create(ActivityLoggedIn.this, R.raw.sound);
-        /* loop sound and force to play on speakers at max volume
+            MediaPlayer mPlayer = MediaPlayer.create(ActivityLoggedIn.this, R.raw.sound);
 
-        AudioManager audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
-       audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
-        audioManager.setMode(AudioManager.MODE_IN_CALL);
-       audioManager.setSpeakerphoneOn(true);
-        mPlayer.setLooping(true);
+            AudioManager audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+           audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
+            audioManager.setMode(AudioManager.MODE_IN_CALL);
+           audioManager.setSpeakerphoneOn(true);
+            mPlayer.setLooping(true);
 
-        */
-
-                    //mPlayer.start();
+                    mPlayer.start();
                 }
             });
         }

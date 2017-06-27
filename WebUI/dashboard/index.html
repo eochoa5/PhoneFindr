@@ -3,16 +3,27 @@
 <head>
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/favicon.ico" type="image/x-icon">
-  <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> --> 
- <link rel="stylesheet" href="https://bootswatch.com/spacelab/bootstrap.min.css">
-
-
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> 
  
 <title>Dashboard</title>
 
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/4.1.2/firebase.js"></script>
 <script src="/socket.io/socket.io.js"></script> 
+
+<style type="text/css">
+	header{background: rgb(35, 47, 62); width:100%; color:lightgray; display: inline-block; height: 70px; text-align: center; font-weight: bold;}
+	header span{font-size: 20px; color: white;}
+	@media screen and (max-width: 570px) {
+	    header span{float:left; margin-left:20px;}
+	}
+
+	body{background: lightgray;}
+	#logout{right:1%; top:0; position: absolute; font-weight: bold;}
+	#logout button{margin-top: 3px; border-radius: 15px; float:right;}
+
+</style>
+
 <script type="text/javascript">
 	
 	var config = {
@@ -31,27 +42,13 @@
   
   if (user) {
   	email = user.email;
-// <<<<<<< WebUI
-//drew2g 6/23 ===============================
-//emit the 'new user' socket.on method in index.js, using this function to pass the email address and another function as a callback
-//===========================================
-    socket.emit('new user', email ,function(data){
-
-              if(data){
-              localStorage.email = email; //t
-            }
-          })
-
 
     $('#userDiv').html('Hello, \n' + email);
-    $('#userDiv').css('color','white');
-
-// =======
-
-   
-// >>>>>>> master
+ 
+    socket = io.connect();
     
-      
+    socket.emit('new user', email);
+   
   } 
   else{
   	window.location.href = "/";
@@ -69,57 +66,31 @@
 
   }
 
-</script>
-
-<script type="text/javascript">
-
-    var socket = io.connect();
-    
-
-    socket.on('new user', function(data, callback){
-    if(users.indexOf(data) != -1){
-      callback(false);
-      return;
-    }
-      
-      /* temp this will go on the Android side*/
-      socket.on('ring request', function(data){
-   			$('#tempDiv').html('PHONE RING REQUESTED');
-				
-				
-			});
-    
-    callback(true);
-    socket.username = data;
-    users.push(socket.username);
-  });
-
   function makeRing(){
   	socket.emit('ring', email);
 
   }
 
-
-$(document).ready(function() {
-    $(".dropdown-toggle").dropdown();
-});
-
-
 </script>
 
-
 </head>
-  <header style="height:4.5em;background-color:grey;">
-  <div id ="topBar" style="float:right">
-      <div id="userDiv">
-      </div>
-      <button onclick="logOut()" class="btn btn-default">Log Out</button>
-      <button onclick="makeRing()" class="btn btn-default">Make it Ring</button>
-      <div id="tempDiv" style="font-weight: bold; color:red; font-size: 24px;">
-      </div>
-    </div>
-  </header>
+<header>
+<br>
+	<span>Phone Findr</span>
+	<div id="logout">
+		<div id="userDiv"></div>
+		<button class="btn btn-primary btn-sm" onclick="logOut()">Logout</button>
+
+	</div>
+</header>
 <body>
-  <h1 style="clear:both;text-align:center;margin:.4em;">Android Phone Finder</h1>
+<div id="btns-container" style="display: table; margin: 0 auto; margin-top: 10px;">
+	<button class="btn btn-success" onclick="makeRing()">Make Phone Ring</button> &nbsp; <button class="btn btn-success">Show Phone's Location</button>
+
+</div>
+
+
+
+
 </body>
 </html>
