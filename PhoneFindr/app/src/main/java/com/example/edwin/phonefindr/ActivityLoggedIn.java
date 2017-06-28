@@ -41,7 +41,7 @@ public class ActivityLoggedIn extends AppCompatActivity {
     private Socket socket;
     {
         try{
-            socket = IO.socket("http://192.168.1.172:3000");
+            socket = IO.socket("http://107.170.235.237:3000");
 
         }catch(URISyntaxException e){
             throw new RuntimeException(e);
