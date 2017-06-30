@@ -5,6 +5,7 @@
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/favicon.ico" type="image/x-icon">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> 
+ <link rel='stylesheet prefetch' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css'>
  
 <title>Dashboard</title>
 
@@ -22,7 +23,7 @@
 	body{background: lightgray; padding-bottom: 50px;}
 	#logout{right:1%; top:0; position: absolute; font-weight: bold;}
 	#logout button{margin-top: 3px; border-radius: 15px; float:right;}
-  #map{width:700px; height: 500px; border:1px solid red; margin-top: 15px !important; margin: 0 auto;
+  #map{width:700px; height: 500px; margin-top: 15px !important; margin: 0 auto;
   }
 
 </style>
@@ -69,8 +70,30 @@
 
   }
 
-  function makeRing(){
+  function makeRing(target){
   	socket.emit('ring', email);
+
+    $(target).html('<i class="fa fa-bell"></i>'+ " Ringing...");
+    $(target).prop("disabled",true);
+
+    setTimeout(function() { 
+      $(target).prop("disabled",false);
+      $(target).html("Make Phone Ring");
+        }, 10000);
+
+  }
+
+  function getLocation(target){
+    // to do
+
+    $(target).html("Please wait...");
+    $(target).prop("disabled",true);
+
+    setTimeout(function() { 
+      $(target).prop("disabled",false);
+      $(target).html("Show Phone's Location");
+        }, 10000);
+
 
   }
 
@@ -88,13 +111,11 @@
 </header>
 <body>
 <div id="btns-container" style="display: table; margin: 0 auto; margin-top: 10px;">
-	<button class="btn btn-success" onclick="makeRing()">Make Phone Ring</button> &nbsp; <button class="btn btn-success">Show Phone's Location</button>
+	<button class="btn btn-success" onclick="makeRing(this)" style="width:160px">Make Phone Ring</button> &nbsp; <button class="btn btn-success" style="width:170px" onclick="getLocation(this)">Show Phone's Location</button>
 
 </div>
 
 <!--Google maps code here -->
-
-
 
 </body>
 </html>
