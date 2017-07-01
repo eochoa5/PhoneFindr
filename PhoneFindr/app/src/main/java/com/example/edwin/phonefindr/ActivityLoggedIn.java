@@ -41,11 +41,9 @@ public class ActivityLoggedIn extends AppCompatActivity {
     private Socket socket;
     {
         try{
-<<<<<<< HEAD
-            socket = IO.socket("http://107.170.235.237:3000");
-=======
+
             socket = IO.socket("https://fonefinder.herokuapp.com");
->>>>>>> 8de8cb1223b3e97de69f860223752a845752f2f9
+
 
         }catch(URISyntaxException e){
             throw new RuntimeException(e);
