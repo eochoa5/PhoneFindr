@@ -20,6 +20,7 @@ io.on('connection', function(socket){
 	socket.on('new user', function(data){
 		socket.email = data;
 		users.push(socket);
+		var phoneID;
 
 		/*
 		console.log("USERS: " );
@@ -43,6 +44,36 @@ io.on('connection', function(socket){
 
 		}
 	});
+
+
+	socket.on('requestLocation', function(data){
+		
+		for(i=0 ; i<users.length; i++){
+			if(users[i].email == data && users[i].id != socket.id){
+
+				phoneID = users[i].email;
+				io.to(users[i].id).emit('location request', socket.id);
+				console.log("sent a location request");
+			}
+
+		}
+	});
+
+	socket.on('receiveLocation', function(data){
+		console.log("received a location");
+		console.log(data);
+
+	for(i=0 ; i<users.length; i++){
+		if(users[i].email == phoneID && users[i].id != socket.id){
+
+				io.to(users[i].id).emit('locationPayload', socket.id);
+				console.log("location payload moving out");
+			}
+		}
+
+		
+	});
+
 
 	socket.on('disconnect', function(){
 

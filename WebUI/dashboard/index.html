@@ -72,7 +72,7 @@
 
   function makeRing(target){
   	socket.emit('ring', email);
-
+    console.log("requested a ring");
     $(target).html('<i class="fa fa-bell"></i>'+ " Ringing...");
     $(target).prop("disabled",true);
 
@@ -83,8 +83,11 @@
 
   }
 
-  function getLocation(target){
+  function requestLocation(target){
     // to do
+    socket.emit('requestLocation', email);
+    console.log("requested a location");
+    
 
     $(target).html("Please wait...");
     $(target).prop("disabled",true);
@@ -92,10 +95,19 @@
     setTimeout(function() { 
       $(target).prop("disabled",false);
       $(target).html("Show Phone's Location");
+      // socket.on('locationPayload', function(data){
+      //   console.log(data);
+      // });
+
         }, 10000);
 
 
   }
+
+  // function receiveLocation(target){
+  //   console.log("received a location");
+  // }
+  
 
 </script>
 
@@ -111,7 +123,7 @@
 </header>
 <body>
 <div id="btns-container" style="display: table; margin: 0 auto; margin-top: 10px;">
-	<button class="btn btn-success" onclick="makeRing(this)" style="width:160px">Make Phone Ring</button> &nbsp; <button class="btn btn-success" style="width:170px" onclick="getLocation(this)">Show Phone's Location</button>
+	<button class="btn btn-success" onclick="makeRing(this)" style="width:160px">Make Phone Ring</button> &nbsp; <button class="btn btn-success" style="width:170px" onclick="requestLocation(this)">Show Phone's Location</button>
 
 </div>
 
