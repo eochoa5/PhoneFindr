@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/favicon.ico" type="image/x-icon">
  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
- <link rel='stylesheet prefetch' href='http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css'>
+ <link rel='stylesheet prefetch' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css'>
  <link rel="stylesheet" href="css/style.css">
 <title>PhoneFindr</title>
 
@@ -13,19 +14,20 @@
 <script src="js/script.js"></script>
 
 </head>
-<body>
+<body> <center><i class="fa fa-spinner fa-spin" id="spinner"></i></center>
   <div class="login-form">
      <span style="font-size: 22px"><b><center>PhoneFindr Login</center></b></span><br>
-     <div class="form-group log-status">
-       <input type="text" class="form-control" placeholder="Email" id="email">
+     <div class="form-group log-status" onkeypress="$(this).removeClass('wrong-entry');">
+       <input type="text" class="form-control" placeholder="Email" id="email" onkeydown = "if (event.keyCode == 13){signIn()}">
        <i class="fa fa-user"></i>
      </div>
-     <div class="form-group log-status">
-       <input type="password" class="form-control" placeholder="Password" id="password">
+     <div class="form-group log-status" onkeypress="$(this).removeClass('wrong-entry');">
+       <input type="password" class="form-control" placeholder="Password" id="password" 
+       onkeydown = "if (event.keyCode == 13){signIn()}">
        <i class="fa fa-lock"></i>
      </div>
       <span class="alert">Invalid email or password</span>
-     <button type="button" class="log-btn" onclick="signIn(this)">Log in</button>
+     <button type="button" class="log-btn" onclick="signIn()" id="lg-b">Log in</button>
      
     <br><br>
    </div>

@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/favicon.ico" type="image/x-icon">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> 
+ <link rel='stylesheet prefetch' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css'>
  
 <title>Dashboard</title>
 
@@ -18,9 +20,11 @@
 	    header span{float:left; margin-left:20px;}
 	}
 
-	body{background: lightgray;}
+	body{background: lightgray; padding-bottom: 50px;}
 	#logout{right:1%; top:0; position: absolute; font-weight: bold;}
 	#logout button{margin-top: 3px; border-radius: 15px; float:right;}
+  #map{width:700px; height: 500px; margin-top: 15px !important; margin: 0 auto;
+  }
 
 </style>
 
@@ -66,8 +70,30 @@
 
   }
 
-  function makeRing(){
+  function makeRing(target){
   	socket.emit('ring', email);
+
+    $(target).html('<i class="fa fa-bell"></i>'+ " Ringing...");
+    $(target).prop("disabled",true);
+
+    setTimeout(function() { 
+      $(target).prop("disabled",false);
+      $(target).html("Make Phone Ring");
+        }, 10000);
+
+  }
+
+  function getLocation(target){
+    // to do
+
+    $(target).html("Please wait...");
+    $(target).prop("disabled",true);
+
+    setTimeout(function() { 
+      $(target).prop("disabled",false);
+      $(target).html("Show Phone's Location");
+        }, 10000);
+
 
   }
 
@@ -85,12 +111,56 @@
 </header>
 <body>
 <div id="btns-container" style="display: table; margin: 0 auto; margin-top: 10px;">
-	<button class="btn btn-success" onclick="makeRing()">Make Phone Ring</button> &nbsp; <button class="btn btn-success">Show Phone's Location</button>
+	<button class="btn btn-success" onclick="makeRing(this)" style="width:160px">Make Phone Ring</button> &nbsp; <button class="btn btn-success" style="width:170px" onclick="getLocation(this)">Show Phone's Location</button>
 
 </div>
 
+<div id="map"></div>
+    <script>
+    var marker;
+      function initMap() {
+       
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 9,
+          center: {lat: 34.0667886, lng: -118.1702789},
+          fullscreenControl: true,
+          zoomControl: true,
+          scaleControl: true,
+          streetViewControl: true,
+         
+        });
 
+      var image ="img/android1.png";
+      var myLatLng= {lat: 34.0667886, lng: -118.1702789};
+      marker = new google.maps.Marker({
+      position: myLatLng,
+      map: map,
+      title: 'Your phone is here! Click for more info',
+      icon: image
+      });
+      marker.setOptions({'opacity': 0.8});
 
+      var contentString = "<h4>Location: 5151 State University Dr, Los Angeles, CA 90032</h4> <br>" +
+          "<a href='#'>Get Directions</a>";
+
+      var infowindow = new google.maps.InfoWindow({
+       content: contentString
+      });
+
+      marker.addListener('click', function() {
+        infowindow.open(map, marker);
+      });
+      
+      //var latlng = new google.maps.LatLng(41.85, -87.65);
+         // marker.setPosition(latlng);
+
+      }
+    
+  
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBL9UZgxdhQyz_mj1rB969bH7_BHRT_aA0&callback=initMap">
+    </script>
 
 </body>
 </html>

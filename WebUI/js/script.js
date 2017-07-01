@@ -20,34 +20,35 @@
 
 });
 
+  function signIn(){
 
-$('.form-control').keypress(function(){
-     $('.log-status').removeClass('wrong-entry');
- });
-
-  function signIn(target){
-    $(target).prop("disabled",true);
-
+    $('#spinner').css("font-size", "100px");
+  
+    $('#lg-b').prop("disabled",true);
+    
     var email = $('#email').val();
     var pass = $('#password').val();
-  
       
-      firebase.auth().signInWithEmailAndPassword(email, pass).catch(function(error) {
-  
-      var errorCode = error.code;
-      var errorMessage = error.message;
+      firebase.auth().signInWithEmailAndPassword(email, pass).then(function(callback){
+        window.location.href = "/dashboard";
+      }).catch(function(error) {
+       
+       $('#spinner').css("font-size", "0px");
+       var errorCode = error.code;
+       var errorMessage = error.message;
      
        $('.log-status').addClass('wrong-entry');
        $('.alert').fadeIn(500);
 
        setTimeout(function() { 
          $('.alert').fadeOut(1000);
-         $(target).prop("disabled",false);
+         
+        $('#lg-b').prop("disabled",false); 
 
         }, 700);
         
-  
      });
+
   }
 
 

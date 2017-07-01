@@ -135,3 +135,6 @@ body {
     left: -15px;
   }
 }
+
+
+.fa-spinner{font-size: 0px; color:lightgray; z-index: 3; margin-top: 20px;}

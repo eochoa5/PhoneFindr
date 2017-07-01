@@ -41,7 +41,11 @@ public class ActivityLoggedIn extends AppCompatActivity {
     private Socket socket;
     {
         try{
+<<<<<<< HEAD
             socket = IO.socket("http://107.170.235.237:3000");
+=======
+            socket = IO.socket("https://fonefinder.herokuapp.com");
+>>>>>>> 8de8cb1223b3e97de69f860223752a845752f2f9
 
         }catch(URISyntaxException e){
             throw new RuntimeException(e);
@@ -69,15 +73,15 @@ public class ActivityLoggedIn extends AppCompatActivity {
         TextView username = (TextView)findViewById(R.id.username);
         username.setText(user);
         TextView welcomeMessage = (TextView) findViewById(R.id.welcomeMessage);
-        String instructions = "This app will help you find your phone. Go to site.com and " +
+        String instructions = "This app will help you find your phone. Go to https://fonefinder.herokuapp.com and " +
                 "sign in and you will be able to make your phone ring and see its location in the map. ";
 
         String content = "Welcome "+user + "\n\n" + instructions ;
 
         SpannableStringBuilder str = new SpannableStringBuilder(content);
-        int startPos = content.indexOf("site.com");
+        int startPos = content.indexOf("https://fonefinder.herokuapp.com");
         str.setSpan(new ForegroundColorSpan(Color.RED),
-                startPos, startPos+8, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                startPos, startPos+32, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         welcomeMessage.setText(str);
 
         socket.connect();
