@@ -115,7 +115,52 @@
 
 </div>
 
-<!--Google maps code here -->
+<div id="map"></div>
+    <script>
+    var marker;
+      function initMap() {
+       
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 9,
+          center: {lat: 34.0667886, lng: -118.1702789},
+          fullscreenControl: true,
+          zoomControl: true,
+          scaleControl: true,
+          streetViewControl: true,
+         
+        });
+
+      var image ="img/android1.png";
+      var myLatLng= {lat: 34.0667886, lng: -118.1702789};
+      marker = new google.maps.Marker({
+      position: myLatLng,
+      map: map,
+      title: 'Your phone is here! Click for more info',
+      icon: image
+      });
+      marker.setOptions({'opacity': 0.8});
+
+      var contentString = "<h4>Location: 5151 State University Dr, Los Angeles, CA 90032</h4> <br>" +
+          "<a href='#'>Get Directions</a>";
+
+      var infowindow = new google.maps.InfoWindow({
+       content: contentString
+      });
+
+      marker.addListener('click', function() {
+        infowindow.open(map, marker);
+      });
+      
+      //var latlng = new google.maps.LatLng(41.85, -87.65);
+         // marker.setPosition(latlng);
+
+      }
+    
+  
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBL9UZgxdhQyz_mj1rB969bH7_BHRT_aA0&callback=initMap">
+    </script>
 
 </body>
 </html>
