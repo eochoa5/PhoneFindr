@@ -1,5 +1,10 @@
 # PhoneFindr
 
+TODO:
+==========================================
+on WebUI, indicate somehow that the phone is connected/disconnected to the server.
+on PhoneUI, have an alert pop up when the phone "rings" so that you can turn off the alarm.
+
 This Android app helps you find your phone if you misplaced it somewhere. If it gets stolen it might still
 do what it's supposed to do but we don't guarantee it because the phone might have been turned off or location disabled.
 
