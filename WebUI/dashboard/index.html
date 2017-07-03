@@ -51,7 +51,11 @@
 </style>
 
 <script type="text/javascript">
-	
+	var marker;
+  var map;
+  var image;
+  var infowindow;
+
 	var config = {
     apiKey: "AIzaSyA_yDgR6Ru2hVlCPT86y1FKH2Jx2HI0PGc",
     authDomain: "phonefindr-39f72.firebaseapp.com",
@@ -82,8 +86,21 @@
             setTimeout(function() { 
               $('#message').fadeOut();
             }, 3000);
+
         }
-        
+        else
+        {
+          $('#locationButton').html('Phone Found!');
+          var pLat = parseFloat(data.lat).toFixed(3);
+          var pLon = parseFloat(data.lon).toFixed(3);
+
+          var latlng = new google.maps.LatLng(pLat, pLon);
+          
+          marker.setPosition(latlng);
+          marker.setMap(map);
+          infowindow.setContent("Latitude: " + data.lat+", Longitude: "+data.lon);
+          map.setCenter(marker.getPosition());
+        }
       });
    
   } 
@@ -105,7 +122,6 @@
 
   function makeRing(target){
   	socket.emit('ring', email);
-    console.log("requested a ring");
     $(target).html('<i class="fa fa-bell"></i>'+ " Ringing...");
     $(target).prop("disabled",true);
 
@@ -145,7 +161,7 @@
 </header>
 <body>
 <center><div id="btns-container" style=" margin-top: 10px;">
-	<button class="btn btn-success" onclick="makeRing(this)" style="width:160px">Make Phone Ring</button> &nbsp; <button class="btn btn-success" style="width:170px" onclick="requestLocation(this)">Show Phone's Location</button>
+	<button class="btn btn-success" id = "ringButton" onclick="makeRing(this)" style="width:160px">Make Phone Ring</button> &nbsp; <button class="btn btn-success" id ="locationButton" style="width:170px" onclick="requestLocation(this)">Show Phone's Location</button>
 
 </div></center>
 
@@ -153,10 +169,11 @@
 
 <div id="map"></div>
     <script>
-    var marker;
+    
+    
       function initMap() {
        
-        var map = new google.maps.Map(document.getElementById('map'), {
+        map = new google.maps.Map(document.getElementById('map'), {
           zoom: 9,
           center: {lat: 34.0667886, lng: -118.1702789},
           fullscreenControl: true,
@@ -166,7 +183,7 @@
          
         });
 
-      var image ="img/android1.png";
+      image ="img/android1.png";
       var myLatLng= {lat: 34.0667886, lng: -118.1702789};
       marker = new google.maps.Marker({
       position: myLatLng,
@@ -179,7 +196,7 @@
       var contentString = "<h4>Location: 5151 State University Dr, Los Angeles, CA 90032</h4> <br>" +
           "<a href='#'>Get Directions</a>";
 
-      var infowindow = new google.maps.InfoWindow({
+      infowindow = new google.maps.InfoWindow({
        content: contentString
       });
 
