@@ -20,18 +20,7 @@ io.on('connection', function(socket){
 	socket.on('new user', function(data){
 		socket.email = data;
 		users.push(socket);
-		var phoneID;
-
-		/*
-		console.log("USERS: " );
-
-		for(i=0 ; i<users.length; i++){
-			console.log("email : " + users[i].email + " id: " + users[i].id);
-
-		}
-		*/
-		
-		
+				
 	});
 
 	socket.on('ring', function(data){
@@ -45,32 +34,19 @@ io.on('connection', function(socket){
 		}
 	});
 
-
 	socket.on('requestLocation', function(data){
 		
 		for(i=0 ; i<users.length; i++){
 			if(users[i].email == data && users[i].id != socket.id){
 
-				phoneID = users[i].email;
 				io.to(users[i].id).emit('location request', socket.id);
-				console.log("sent a location request");
 			}
 
 		}
 	});
 
-	socket.on('receiveLocation', function(data){
-		console.log("received a location");
-		console.log(data);
-
-	for(i=0 ; i<users.length; i++){
-		if(users[i].email == phoneID && users[i].id != socket.id){
-
-				io.to(users[i].id).emit('locationPayload', socket.id);
-				console.log("location payload moving out");
-			}
-		}
-
+	socket.on('send location', function(data){
+		io.to(data.to).emit('location received', {lat: data.lat, lon: data.lon});
 		
 	});
 
@@ -84,7 +60,7 @@ io.on('connection', function(socket){
 
 });
 
-http.listen(process.env.PORT || 8080, function(){
+http.listen(process.env.PORT || 3000, function(){
 	console.log('server running');
 });
 

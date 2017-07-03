@@ -23,8 +23,30 @@
 	body{background: lightgray; padding-bottom: 50px;}
 	#logout{right:1%; top:0; position: absolute; font-weight: bold;}
 	#logout button{margin-top: 3px; border-radius: 15px; float:right;}
-  #map{width:700px; height: 500px; margin-top: 15px !important; margin: 0 auto;
+  #map{width:700px; height: 500px; margin-top: 15px !important; margin: 0 auto;}
+  #message{width: 330px; border: 1px solid red; color:red; background-color: #f9b5af; text-align: center; height: 30px; margin-top: 10px; border-radius: 15px; line-height: 28px;}
+  #btns-container button{margin-top: 10px;}
+
+  @media screen and (max-width: 700px) {
+      #map{width:100%;}
   }
+  
+ .flashit{
+    -webkit-animation: flash linear 1.5s;
+    animation: flash linear 1.5s;
+}
+@-webkit-keyframes flash {
+    0% { margin-left: 25px; } 
+    30% { margin-left: 0px; } 
+    60% { margin-left: -25px; } 
+    100% { margin-left: 0px; }    
+}
+@keyframes flash {
+      0% { margin-left: 25px; } 
+    30% { margin-left: 0px; } 
+    60% { margin-left: -25px; } 
+    100% { margin-left: 0px; } 
+}
 
 </style>
 
@@ -52,6 +74,17 @@
     socket = io.connect();
     
     socket.emit('new user', email);
+
+    socket.on('location received', function(data){
+      
+        if(data.lat == 0 && data.lon == 0){
+          $('#message').fadeIn();
+            setTimeout(function() { 
+              $('#message').fadeOut();
+            }, 3000);
+        }
+        
+      });
    
   } 
   else{
@@ -84,10 +117,7 @@
   }
 
   function requestLocation(target){
-    // to do
     socket.emit('requestLocation', email);
-    console.log("requested a location");
-    
 
     $(target).html("Please wait...");
     $(target).prop("disabled",true);
@@ -95,20 +125,12 @@
     setTimeout(function() { 
       $(target).prop("disabled",false);
       $(target).html("Show Phone's Location");
-      // socket.on('locationPayload', function(data){
-      //   console.log(data);
-      // });
-
-        }, 10000);
-
+      
+        }, 7000);
 
   }
 
-  // function receiveLocation(target){
-  //   console.log("received a location");
-  // }
-  
-
+ 
 </script>
 
 </head>
@@ -122,10 +144,12 @@
 	</div>
 </header>
 <body>
-<div id="btns-container" style="display: table; margin: 0 auto; margin-top: 10px;">
+<center><div id="btns-container" style=" margin-top: 10px;">
 	<button class="btn btn-success" onclick="makeRing(this)" style="width:160px">Make Phone Ring</button> &nbsp; <button class="btn btn-success" style="width:170px" onclick="requestLocation(this)">Show Phone's Location</button>
 
-</div>
+</div></center>
+
+<center><div id="message" class="flashit" style="display: none"> Coming soon!</div></center>
 
 <div id="map"></div>
     <script>

@@ -34,6 +34,9 @@ import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 public class ActivityLoggedIn extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
@@ -42,8 +45,8 @@ public class ActivityLoggedIn extends AppCompatActivity {
     {
         try{
 
-            socket = IO.socket("https://fonefinder.herokuapp.com");
-
+           socket = IO.socket("https://fonefinder.herokuapp.com");
+            //socket = IO.socket("http://192.168.1.172:3000");
 
         }catch(URISyntaxException e){
             throw new RuntimeException(e);
@@ -85,6 +88,7 @@ public class ActivityLoggedIn extends AppCompatActivity {
         socket.connect();
         socket.emit("new user", email);
         socket.on("ring request", makeRing);
+        socket.on("location request", sendLocation);
 
 
 
@@ -97,15 +101,36 @@ public class ActivityLoggedIn extends AppCompatActivity {
                 @Override
                 public void run() {
 
-            MediaPlayer mPlayer = MediaPlayer.create(ActivityLoggedIn.this, R.raw.sound);
+                    MediaPlayer mPlayer = MediaPlayer.create(ActivityLoggedIn.this, R.raw.sound);
 
-            AudioManager audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
-           audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
-            audioManager.setMode(AudioManager.MODE_IN_CALL);
-           audioManager.setSpeakerphoneOn(true);
-            mPlayer.setLooping(true);
+                    AudioManager audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
+                    audioManager.setMode(AudioManager.MODE_IN_CALL);
+                    audioManager.setSpeakerphoneOn(true);
+                    mPlayer.setLooping(true);
 
                     mPlayer.start();
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener sendLocation = new Emitter.Listener(){
+        @Override
+        public void call(final Object... args){
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject toLatLon = new JSONObject();
+                    try{
+                        toLatLon.put("to",args[0].toString());
+                        toLatLon.put("lat",0);
+                        toLatLon.put("lon",0);
+                        socket.emit("send location", toLatLon);
+                    }catch(JSONException e){
+                        e.printStackTrace();
+                    }
+
                 }
             });
         }
