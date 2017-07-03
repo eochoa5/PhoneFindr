@@ -31,17 +31,17 @@
       #map{width:100%;}
   }
   
- .flashit{
-    -webkit-animation: flash linear 1.5s;
-    animation: flash linear 1.5s;
+ .anim{
+    -webkit-animation: leftright linear 1.5s;
+    animation: leftright linear 1.5s;
 }
-@-webkit-keyframes flash {
+@-webkit-keyframes leftright {
     0% { margin-left: 25px; } 
     30% { margin-left: 0px; } 
     60% { margin-left: -25px; } 
     100% { margin-left: 0px; }    
 }
-@keyframes flash {
+@keyframes leftright {
       0% { margin-left: 25px; } 
     30% { margin-left: 0px; } 
     60% { margin-left: -25px; } 
@@ -149,7 +149,7 @@
 
 </div></center>
 
-<center><div id="message" class="flashit" style="display: none"> Coming soon!</div></center>
+<center><div id="message" class="anim" style="display: none"> Coming soon!</div></center>
 
 <div id="map"></div>
     <script>
