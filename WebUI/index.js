@@ -15,13 +15,9 @@ app.use(express.static(__dirname));
 io.on('connection', function(socket){
 
 	console.log('a user has connected: ' + socket.id);
-
-
-	socket.on('new user', function(data){
-		socket.email = data;
-		users.push(socket);
-				
-	});
+	
+	socket.email = socket.handshake.query['email'];
+	users.push(socket);
 
 	socket.on('ring', function(data){
 

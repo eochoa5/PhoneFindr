@@ -35,15 +35,7 @@ public class ActivityLoggedIn extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private Socket socket;
     private GPSTracker gps;
-    {
-        try{
-           //socket = IO.socket("https://fonefinder.herokuapp.com");
-            socket = IO.socket("http://192.168.1.172:8080");
-        }catch(URISyntaxException e){
-            throw new RuntimeException(e);
-        }
-    }
-
+    private IO.Options options;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +68,16 @@ public class ActivityLoggedIn extends AppCompatActivity {
                 startPos, startPos+32, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         welcomeMessage.setText(str);
 
+        options = new IO.Options();
+        options.query = "email="+email;
+        try{
+            //socket = IO.socket("https://fonefinder.herokuapp.com");
+            socket = IO.socket("http://192.168.1.172:8080", options);
+        }catch(URISyntaxException e){
+            throw new RuntimeException(e);
+        }
+
         socket.connect();
-        socket.emit("new user", email);
         socket.on("ring request", makeRing);
         socket.on("location request", sendLocation);
 
