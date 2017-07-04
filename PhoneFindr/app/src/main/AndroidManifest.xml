@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application
         android:allowBackup="true"
@@ -28,6 +29,28 @@
             android:name=".ActivityLoggedIn"
             android:label="@string/title_activity_activity_logged_in"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <service
+            android:name=".SocketIoService"
+            android:enabled="true" >
+        </service>
+
+        <receiver
+            android:name=".ServiceRestarter"
+            android:enabled="true"
+            android:exported="true"
+            android:label="RestartServiceWhenStopped">
+            <intent-filter>
+                <action android:name="com.example.edwin.phonefindr.ServiceRestarter"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.example.edwin.phonefindr.BootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED">
+                    <category android:name="android.intent.category.HOME">
+                    </category></action></intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

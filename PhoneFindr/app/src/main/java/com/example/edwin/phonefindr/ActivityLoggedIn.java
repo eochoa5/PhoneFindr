@@ -1,12 +1,10 @@
 package com.example.edwin.phonefindr;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -21,21 +20,13 @@ import android.widget.Toast;
 
 import com.example.edwin.phonefindr.utils.GPSTracker;
 import com.google.firebase.auth.FirebaseAuth;
-import java.net.URISyntaxException;
-
-import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 
 public class ActivityLoggedIn extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
-    private Socket socket;
     private GPSTracker gps;
-    private IO.Options options;
+    Intent mServiceIntent;
+    private SocketIoService mSocketIoService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +34,13 @@ public class ActivityLoggedIn extends AppCompatActivity {
         setContentView(R.layout.activity_logged_in);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        mSocketIoService = new SocketIoService(this);
+        mServiceIntent = new Intent(this, mSocketIoService.getClass());
+        if (!isMyServiceRunning(mSocketIoService.getClass())) {
+            startService(mServiceIntent);
+        }
+
         firebaseAuth = FirebaseAuth.getInstance();
 
         if(firebaseAuth.getCurrentUser() == null){
@@ -68,19 +66,6 @@ public class ActivityLoggedIn extends AppCompatActivity {
                 startPos, startPos+32, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         welcomeMessage.setText(str);
 
-        options = new IO.Options();
-        options.query = "email="+email;
-        try{
-            socket = IO.socket("https://fonefinder.herokuapp.com", options);
-            //socket = IO.socket("http://192.168.1.172:8080", options);
-        }catch(URISyntaxException e){
-            throw new RuntimeException(e);
-        }
-
-        socket.connect();
-        socket.on("ring request", makeRing);
-        socket.on("location request", sendLocation);
-
         gps = new GPSTracker(this);
 
         if(!gps.canGetLocation()) {
@@ -88,53 +73,17 @@ public class ActivityLoggedIn extends AppCompatActivity {
         }
     }
 
-    private Emitter.Listener makeRing = new Emitter.Listener(){
-        @Override
-        public void call(final Object... args){
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
 
-                    MediaPlayer mPlayer = MediaPlayer.create(ActivityLoggedIn.this, R.raw.sound);
-
-                    AudioManager audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
-                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
-                    audioManager.setMode(AudioManager.MODE_IN_CALL);
-                    audioManager.setSpeakerphoneOn(true);
-                    mPlayer.setLooping(true);
-
-                    mPlayer.start();
-                }
-            });
+                return true;
+            }
         }
-    };
 
-    private Emitter.Listener sendLocation = new Emitter.Listener(){
-        @Override
-        public void call(final Object... args){
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    gps = new GPSTracker(getApplicationContext());
-
-                    String lat = gps.getLatitude()+"";
-                    String lon = gps.getLongitude()+"";
-
-                    //JSON
-                    JSONObject toLatLon = new JSONObject();
-                    try{
-                        toLatLon.put("to",args[0].toString());
-                        toLatLon.put("lat",lat);
-                        toLatLon.put("lon",lon);
-                        socket.emit("send location", toLatLon);
-                    }catch(JSONException e){
-                        e.printStackTrace();
-                    }
-
-                }
-            });
-        }
-    };
+        return false;
+    }
 
 
     @Override
@@ -175,8 +124,7 @@ public class ActivityLoggedIn extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        socket.disconnect();
-    }
 
+    }
 
 }
