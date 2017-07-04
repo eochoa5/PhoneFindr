@@ -137,4 +137,4 @@ body {
 }
 
 
-.fa-spinner{font-size: 0px; color:lightgray; z-index: 3; margin-top: 20px;}
+.fa-spinner{font-size: 0px; color:lightgray; z-index: 1000; margin-top: 20px;}

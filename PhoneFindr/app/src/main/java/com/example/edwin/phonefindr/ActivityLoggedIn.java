@@ -1,35 +1,24 @@
 package com.example.edwin.phonefindr;
 
-
-import android.*;
-import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.edwin.phonefindr.utils.GPSTracker;
 import com.google.firebase.auth.FirebaseAuth;
 import java.net.URISyntaxException;
 
@@ -43,47 +32,17 @@ import org.json.JSONObject;
 
 public class ActivityLoggedIn extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
-    public static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
-    private String serviceString = Context.LOCATION_SERVICE;
-    private LocationManager locationManager;
-    private LocationListener locationListener;
-    private Criteria criteria;
-
     private Socket socket;
+    private GPSTracker gps;
     {
         try{
-           socket = IO.socket("https://fonefinder.herokuapp.com");
-            //socket = IO.socket("http://192.168.0.3:8080");
+           //socket = IO.socket("https://fonefinder.herokuapp.com");
+            socket = IO.socket("http://192.168.1.172:8080");
         }catch(URISyntaxException e){
             throw new RuntimeException(e);
         }
     }
 
-
-    public class  myLocationListener implements LocationListener {
-        @Override
-        public void onLocationChanged(Location location) { locationManager.removeUpdates(this); }
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {}
-        @Override
-        public void onProviderEnabled(String provider) {}
-        @Override
-        public void onProviderDisabled(String provider) {}
-    };
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        Log.d("permissions", "requestpermissionsresult");
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d("permissions","permission granted"); }
-                else { Log.d("permissions","permission denied"); }
-                return;
-            }
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,24 +51,6 @@ public class ActivityLoggedIn extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         firebaseAuth = FirebaseAuth.getInstance();
-        locationManager = (LocationManager)getSystemService(serviceString);
-        //Setting the criteria for locationListener
-        criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        criteria.setPowerRequirement(Criteria.POWER_MEDIUM);
-        criteria.setAltitudeRequired(false);
-        criteria.setBearingRequired(false);
-        criteria.setSpeedRequired(false);
-
-        int permissionCheck = ContextCompat.checkSelfPermission(ActivityLoggedIn.this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION);
-
-        if(permissionCheck != PackageManager.PERMISSION_GRANTED)
-        {
-            ActivityCompat.requestPermissions(ActivityLoggedIn.this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-        }
 
         if(firebaseAuth.getCurrentUser() == null){
             Intent i = new Intent(ActivityLoggedIn.this, MainActivity.class);
@@ -138,6 +79,12 @@ public class ActivityLoggedIn extends AppCompatActivity {
         socket.emit("new user", email);
         socket.on("ring request", makeRing);
         socket.on("location request", sendLocation);
+
+        gps = new GPSTracker(this);
+
+        if(!gps.canGetLocation()){
+            gps.showSettingsAlert();
+        }
     }
 
     private Emitter.Listener makeRing = new Emitter.Listener(){
@@ -167,36 +114,21 @@ public class ActivityLoggedIn extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    String lat = null;
-                    String lon = null;
-                    //CHECK PERMISSIONS
-                    if (Build.VERSION.SDK_INT >= 23) {
+                    gps = new GPSTracker(getApplicationContext());
 
-                        if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                                || checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    String lat = gps.getLatitude()+"";
+                    String lon = gps.getLongitude()+"";
 
-                            Log.d("permissions", "permissions check out");
-                            locationListener = new myLocationListener();
-                            locationManager.requestSingleUpdate(criteria, locationListener, null);
-                            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                            lat = ((Double)location.getLatitude()).toString();
-                            lon = ((Double)location.getLongitude()).toString();
-
-                            //JSON
-                            JSONObject toLatLon = new JSONObject();
-                            try{
-                                toLatLon.put("to",args[0].toString());
-                                toLatLon.put("lat",lat);
-                                toLatLon.put("lon",lon);
-                                socket.emit("send location", toLatLon);
-                            }catch(JSONException e){
-                                e.printStackTrace();
-                            }
-                        }
-                        else{Log.d("permissions","permissions failed");}
+                    //JSON
+                    JSONObject toLatLon = new JSONObject();
+                    try{
+                        toLatLon.put("to",args[0].toString());
+                        toLatLon.put("lat",lat);
+                        toLatLon.put("lon",lon);
+                        socket.emit("send location", toLatLon);
+                    }catch(JSONException e){
+                        e.printStackTrace();
                     }
-
-
 
                 }
             });
