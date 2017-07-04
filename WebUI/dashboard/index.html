@@ -53,7 +53,6 @@
 <script type="text/javascript">
 	var marker;
   var map;
-  var image;
   var infowindow;
 
 	var config = {
@@ -98,7 +97,11 @@
           
           marker.setPosition(latlng);
           marker.setMap(map);
-          infowindow.setContent("Latitude: " + data.lat+", Longitude: "+data.lon);
+          marker.setTitle("Your phone is here! click for more info");
+          var contentString = "<h5>Address: Converted address goes here</h5>" +
+          "<h5>Coordinates: " +pLat+","+pLon+"</h5><br>"+
+          "<a target='_blank' href='https://maps.google.com/maps?daddr="+pLat+","+pLon+"'>Get Directions</a>";
+          infowindow.setContent(contentString);
           map.setCenter(marker.getPosition());
         }
       });
@@ -183,29 +186,25 @@
          
         });
 
-      image ="img/android1.png";
+      var image ="img/android1.png";
       var myLatLng= {lat: 34.0667886, lng: -118.1702789};
       marker = new google.maps.Marker({
       position: myLatLng,
       map: map,
-      title: 'Your phone is here! Click for more info',
+      title: 'Your phone will appear here',
       icon: image
       });
       marker.setOptions({'opacity': 0.8});
-
-      var contentString = "<h4>Location: 5151 State University Dr, Los Angeles, CA 90032</h4> <br>" +
-          "<a href='#'>Get Directions</a>";
+      marker.setMap(null);
 
       infowindow = new google.maps.InfoWindow({
-       content: contentString
+       content: "Try it, click on Show Phone's Location"
       });
 
       marker.addListener('click', function() {
         infowindow.open(map, marker);
       });
       
-      //var latlng = new google.maps.LatLng(41.85, -87.65);
-         // marker.setPosition(latlng);
 
       }
     

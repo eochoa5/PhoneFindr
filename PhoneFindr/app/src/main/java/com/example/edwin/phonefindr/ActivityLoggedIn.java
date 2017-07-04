@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -82,7 +83,7 @@ public class ActivityLoggedIn extends AppCompatActivity {
 
         gps = new GPSTracker(this);
 
-        if(!gps.canGetLocation()){
+        if(!gps.canGetLocation()) {
             gps.showSettingsAlert();
         }
     }

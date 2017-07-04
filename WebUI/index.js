@@ -24,7 +24,7 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('ring', function(data){
-		
+
 		for(i=0 ; i<users.length; i++){
 			if(users[i].email == data && users[i].id != socket.id){
 
@@ -35,7 +35,7 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('requestLocation', function(data){
-		
+
 		for(i=0 ; i<users.length; i++){
 			if(users[i].email == data && users[i].id != socket.id){
 
@@ -55,7 +55,13 @@ io.on('connection', function(socket){
 
 		console.log('a user has disconnected: ' + socket.id);
 
-		users.splice(users.indexOf(socket), 1);
+		for(i=0 ; i<users.length; i++){
+
+			if(users[i].id == socket.id){
+				users.splice(i,1);
+			}
+		}
+
 	});
 
 });
