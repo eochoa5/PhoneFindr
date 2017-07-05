@@ -3,12 +3,15 @@ package com.example.edwin.phonefindr;
 /**
  * Created by Edwin on 7/4/2017.
  */
+
 import android.app.Service;
+
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.support.annotation.Nullable;
 
 
@@ -24,15 +27,17 @@ import org.json.JSONObject;
 import java.net.URISyntaxException;
 
 
-/**
- * Created by fabio on 30/01/2016.
- */
 public class SocketIoService extends Service {
     private Context ctx;
     private FirebaseAuth firebaseAuth;
     private Socket socket;
     private GPSTracker gps;
     private IO.Options options;
+    private PowerManager pm;
+    private PowerManager.WakeLock wl;
+    private PowerManager.WakeLock stayAwake;
+    private MediaPlayer mPlayer;
+    private AudioManager audioManager;
 
     public SocketIoService(Context applicationContext) {
         super();
@@ -44,7 +49,6 @@ public class SocketIoService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
-
 
         firebaseAuth = FirebaseAuth.getInstance();
         String email = firebaseAuth.getCurrentUser().getEmail();
@@ -62,12 +66,26 @@ public class SocketIoService extends Service {
         socket.on("ring request", makeRing);
         socket.on("location request", sendLocation);
 
+        pm = (PowerManager)getApplicationContext().getSystemService(
+                Context.POWER_SERVICE);
+        //ignore deprecation
+        wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "MyWakeLock");
+
+        stayAwake = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakeLock2");
+        stayAwake.acquire();
+
+        mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.sound);
+        audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+
         return START_STICKY;
     }
+
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         socket.disconnect();
+        stayAwake.release();
         Intent broadcastIntent = new Intent("com.example.edwin.phonefindr.ServiceRestarter");
         sendBroadcast(broadcastIntent);
     }
@@ -76,25 +94,31 @@ public class SocketIoService extends Service {
         @Override
         public void call(final Object... args){
 
-        MediaPlayer mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.sound);
+        wl.acquire();
 
-        AudioManager audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
-        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
-        audioManager.setMode(AudioManager.MODE_IN_CALL);
-        audioManager.setSpeakerphoneOn(true);
-        mPlayer.setLooping(true);
+        if(!mPlayer.isPlaying()){
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
+            audioManager.setMode(AudioManager.MODE_IN_CALL);
+            audioManager.setSpeakerphoneOn(true);
+            mPlayer.setLooping(true);
 
-        mPlayer.start();
+            mPlayer.start();
 
+            //notification code
+        }
 
+        wl.release();
 
         }
     };
+
+    private void method(){}
 
     private Emitter.Listener sendLocation = new Emitter.Listener(){
         @Override
         public void call(final Object... args){
 
+            wl.acquire();
             gps = new GPSTracker(getApplicationContext());
 
             String lat = gps.getLatitude()+"";
@@ -109,12 +133,18 @@ public class SocketIoService extends Service {
                 socket.emit("send location", toLatLon);
             }catch(JSONException e){
                 e.printStackTrace();
+            }finally{
+                wl.release();
             }
 
         }
     };
 
+    @Override
+    public boolean onUnbind(Intent intent) {
 
+        return super.onUnbind(intent);
+    }
 
     @Nullable
     @Override

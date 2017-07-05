@@ -11,7 +11,6 @@ import android.util.Log;
 public class ServiceRestarter extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.i(ServiceRestarter.class.getSimpleName(), "Service Stopped");
         context.startService(new Intent(context, SocketIoService.class));;
     }
 }

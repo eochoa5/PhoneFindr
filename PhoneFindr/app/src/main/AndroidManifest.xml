@@ -6,7 +6,8 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -27,13 +28,13 @@
         </activity>
         <activity
             android:name=".ActivityLoggedIn"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_activity_logged_in"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <service
             android:name=".SocketIoService"
-            android:enabled="true" >
-        </service>
+            android:enabled="true"></service>
 
         <receiver
             android:name=".ServiceRestarter"
@@ -41,14 +42,15 @@
             android:exported="true"
             android:label="RestartServiceWhenStopped">
             <intent-filter>
-                <action android:name="com.example.edwin.phonefindr.ServiceRestarter"/>
+                <action android:name="com.example.edwin.phonefindr.ServiceRestarter" />
             </intent-filter>
         </receiver>
-        <receiver android:name="com.example.edwin.phonefindr.BootReceiver">
+        <receiver android:name=".BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED">
-                    <category android:name="android.intent.category.HOME">
-                    </category></action></intent-filter>
+                    <category android:name="android.intent.category.HOME"></category>
+                </action>
+            </intent-filter>
         </receiver>
 
     </application>
