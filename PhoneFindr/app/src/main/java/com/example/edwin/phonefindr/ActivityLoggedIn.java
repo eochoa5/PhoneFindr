@@ -71,6 +71,7 @@ public class ActivityLoggedIn extends AppCompatActivity {
         if(!gps.canGetLocation()) {
             gps.showSettingsAlert();
         }
+
     }
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
