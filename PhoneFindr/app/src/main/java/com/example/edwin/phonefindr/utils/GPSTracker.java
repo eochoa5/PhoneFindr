@@ -176,7 +176,6 @@ public class GPSTracker extends Service implements LocationListener{
 
 	@Override
 	public void onProviderDisabled(String arg0) {
-		// TODO Auto-generated method stub
 
 	}
 

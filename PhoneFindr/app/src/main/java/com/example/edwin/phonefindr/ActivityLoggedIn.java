@@ -4,15 +4,17 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -27,6 +29,7 @@ public class ActivityLoggedIn extends AppCompatActivity {
     private GPSTracker gps;
     Intent mServiceIntent;
     private SocketIoService mSocketIoService;
+    public static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,11 +69,22 @@ public class ActivityLoggedIn extends AppCompatActivity {
                 startPos, startPos+32, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         welcomeMessage.setText(str);
 
+        int permissionCheck = ContextCompat.checkSelfPermission(ActivityLoggedIn.this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION);
+
+                if(permissionCheck != PackageManager.PERMISSION_GRANTED){
+                    ActivityCompat.requestPermissions(ActivityLoggedIn.this,
+                                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                                    MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+               }
+
         gps = new GPSTracker(this);
 
         if(!gps.canGetLocation()) {
             gps.showSettingsAlert();
         }
+
+
 
     }
 
