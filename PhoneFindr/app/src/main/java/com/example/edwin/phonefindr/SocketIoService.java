@@ -4,6 +4,9 @@ package com.example.edwin.phonefindr;
  * Created by Edwin on 7/4/2017.
  */
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -13,8 +16,10 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 
 import com.example.edwin.phonefindr.utils.GPSTracker;
+import com.example.edwin.phonefindr.utils.SoundStopper;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
@@ -35,7 +40,8 @@ public class SocketIoService extends Service {
     private PowerManager pm;
     private PowerManager.WakeLock wl;
     private PowerManager.WakeLock stayAwake;
-    private MediaPlayer mPlayer;
+    public static MediaPlayer mPlayer;
+    public static NotificationManager mNotificationManager;
     private AudioManager audioManager;
 
     public SocketIoService(Context applicationContext) {
@@ -96,6 +102,7 @@ public class SocketIoService extends Service {
         wl.acquire();
 
         if(!mPlayer.isPlaying()){
+            mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.sound);
             audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
             audioManager.setMode(AudioManager.MODE_IN_CALL);
             audioManager.setSpeakerphoneOn(true);
@@ -104,14 +111,31 @@ public class SocketIoService extends Service {
             mPlayer.start();
 
             //notification code
+            Intent notificationIntent = new Intent(getApplicationContext(), SoundStopper.class);
+            notificationIntent.putExtra("stopRinging", true);
+            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+
+            NotificationCompat.Builder mBuilder =
+                    new NotificationCompat.Builder(getApplicationContext())
+                            .setSmallIcon(R.mipmap.ic_launcher)
+                            .setContentTitle("PhoneFindr")
+                            .addAction(R.mipmap.ic_stop,"Stop",pendingIntent)
+                            .setPriority(Notification.PRIORITY_MAX);
+            mNotificationManager =
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+            mNotificationManager.notify(0, mBuilder.build());
+            //end of notification code
+
+
+
         }
 
         wl.release();
 
         }
     };
-
-    private void method(){}
 
     private Emitter.Listener sendLocation = new Emitter.Listener(){
         @Override
@@ -138,6 +162,10 @@ public class SocketIoService extends Service {
             }finally{
                 wl.release();
             }
+
+
+
+
 
         }
     };
