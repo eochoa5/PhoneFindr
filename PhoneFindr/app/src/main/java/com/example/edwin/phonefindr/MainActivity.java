@@ -47,14 +47,16 @@ public class MainActivity extends AppCompatActivity {
         createAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(createAccount.getText().equals("Create an Account")){
-                    createAccount.setText("Already have an Account");
+                if(createAccount.getText().equals("Create an account")){
+                    createAccount.setText("Already have an account");
+                    setTitle("Sign up");
                     loginButton.setText("SIGN UP");
                     pass.setHint("Choose a password");
                 }
                 else{
-                    createAccount.setText("Create an Account");
+                    createAccount.setText("Create an account");
                     loginButton.setText("LOGIN");
+                    setTitle("Login");
                     email.setHint("Enter your email");
                     pass.setHint("Password");
 
