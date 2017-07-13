@@ -91,8 +91,10 @@ public class SocketIoService extends Service {
         super.onDestroy();
         socket.disconnect();
         stayAwake.release();
-        Intent broadcastIntent = new Intent("com.example.edwin.phonefindr.ServiceRestarter");
-        sendBroadcast(broadcastIntent);
+        if (firebaseAuth.getCurrentUser()!=null) {
+            Intent broadcastIntent = new Intent("com.example.edwin.phonefindr.ServiceRestarter");
+            sendBroadcast(broadcastIntent);
+        }
     }
 
     private Emitter.Listener makeRing = new Emitter.Listener(){
@@ -142,9 +144,9 @@ public class SocketIoService extends Service {
         public void call(final Object... args){
 
             wl.acquire();
-
-            Looper.prepare();
-
+             if (Looper.myLooper()==null) {
+                 Looper.prepare();
+             }
             gps = new GPSTracker(getApplicationContext());
 
             String lat = gps.getLatitude()+"";
@@ -160,6 +162,7 @@ public class SocketIoService extends Service {
             }catch(JSONException e){
                 e.printStackTrace();
             }finally{
+                gps.stopUsingGPS();
                 wl.release();
             }
 

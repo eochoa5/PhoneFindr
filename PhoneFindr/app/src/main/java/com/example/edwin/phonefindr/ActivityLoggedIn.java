@@ -122,6 +122,11 @@ public class ActivityLoggedIn extends AppCompatActivity {
                              @Override public void onClick(DialogInterface dialog, int which) {
 
                                  firebaseAuth.signOut();
+                                 // stop service
+                                 if (isMyServiceRunning(mSocketIoService.getClass())) {
+                                     stopService(mServiceIntent);
+                                 }
+                                 //
                                  Intent i = new Intent(ActivityLoggedIn.this, MainActivity.class);
                                  startActivity(i);
                                  finish();
