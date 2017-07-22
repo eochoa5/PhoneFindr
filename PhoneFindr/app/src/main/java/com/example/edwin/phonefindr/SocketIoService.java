@@ -19,7 +19,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
 import com.example.edwin.phonefindr.utils.GPSTracker;
-import com.example.edwin.phonefindr.utils.SoundStopper;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
@@ -113,9 +112,9 @@ public class SocketIoService extends Service {
             mPlayer.start();
 
             //notification code
-            Intent notificationIntent = new Intent(getApplicationContext(), SoundStopper.class);
+            Intent notificationIntent = new Intent("com.example.edwin.phonefindr.ServiceRestarter");
             notificationIntent.putExtra("stopRinging", true);
-            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, notificationIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
             NotificationCompat.Builder mBuilder =

@@ -56,7 +56,6 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".utils.SoundStopper"></activity>
     </application>
 
 </manifest>
