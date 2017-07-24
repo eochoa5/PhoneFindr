@@ -104,12 +104,11 @@
       });
 
 	socket.on('phoneConnected', function(phoneName){
-	  	console.log("phone is connected");
+		$('#deviceDiv').html('Device: '+ phoneName);
 	  	$(connected).css("background-color","blue");
-  		$(connectedText).html("Phone  connected");
+  		$(connectedText).html("Phone connected");
     });
     socket.on('phoneDisconnected', function(){
-	  	console.log("phone is disconnected");
 	  	$(connected).css("background-color","red");
   		$(connectedText).html("Phone disconnected");
     });
@@ -144,7 +143,6 @@
   }
 
   function requestLocation(target){
-  	console.log("requesting location...");
     socket.emit('requestLocation', email);
 
     $(target).html("Please wait...");
@@ -170,13 +168,16 @@
 	<span>Phone Findr</span>
 	<div id="logout">
 		<div id="userDiv"></div>
-		<button class="btn btn-primary btn-sm" onclick="logOut()">Logout</button>
+		<div id ="menuSet0">
+			<div style="float:left; padding-top:.5em" id="deviceDiv"></div>
+			<button class="btn btn-primary btn-sm" onclick="logOut()">Logout</button>
+		</div>
 
 	</div>
 </header>
 <body>
 <center><div id ="connected" style = "background-color:red; height:20px">
-<p id ="connectedText" style="color:white;"><strong>Phone disonnected</strong></p>
+<p id ="connectedText" style="color:white;"><strong>Phone disconnected</strong></p>
 </div></center>	
 <center><div id="btns-container" style=" margin-top: 10px;">
 	<button class="btn btn-success" id = "ringButton" onclick="makeRing(this)" style="width:160px">Make Phone Ring</button> &nbsp; <button class="btn btn-success" id ="locationButton" style="width:170px" onclick="requestLocation(this)">Show Phone's Location</button>

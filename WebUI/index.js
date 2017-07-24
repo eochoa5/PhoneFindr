@@ -21,12 +21,11 @@ io.on('connection', function(socket){
 		
 		//phone connection lets WebUI know that phone is Connected
 		if (socket.handshake.query.phone == "true"){
-			console.log("phone connected");
 
 			for(i=0 ; i<users.length; i++){
 
 			if(socket.email == users[i].email && users[i].id != socket.id){
-				io.to(users[i].id).emit('phoneConnected', socket.handshake.query.Name);
+				io.to(users[i].id).emit('phoneConnected', socket.handshake.query.phoneName);
 				}
 			}
 
