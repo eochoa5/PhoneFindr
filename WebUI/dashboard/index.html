@@ -102,6 +102,12 @@
           map.setCenter(marker.getPosition());
         }
       });
+
+	socket.on('isPhoneConnected', function(phoneName){
+	  	console.log("phone is connected");
+	  	$(connected).css("background-color","blue");
+  		$(connectedText).html("Phone connected");
+    });
    
   } 
   else{
@@ -133,6 +139,7 @@
   }
 
   function requestLocation(target){
+  	console.log("requesting location...");
     socket.emit('requestLocation', email);
 
     $(target).html("Please wait...");
@@ -145,6 +152,9 @@
         }, 7000);
 
   }
+
+
+  
 
  
 </script>
@@ -160,6 +170,9 @@
 	</div>
 </header>
 <body>
+<center><div id ="connected" style = "background-color:red; height:20px">
+<p id ="connectedText" style="color:white;"><strong>Phone Not Connected</strong></p>
+</div></center>	
 <center><div id="btns-container" style=" margin-top: 10px;">
 	<button class="btn btn-success" id = "ringButton" onclick="makeRing(this)" style="width:160px">Make Phone Ring</button> &nbsp; <button class="btn btn-success" id ="locationButton" style="width:170px" onclick="requestLocation(this)">Show Phone's Location</button>
 

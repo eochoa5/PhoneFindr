@@ -42,6 +42,7 @@ public class SocketIoService extends Service {
     public static MediaPlayer mPlayer;
     public static NotificationManager mNotificationManager;
     private AudioManager audioManager;
+    private String myPhoneName = "myPhone";
 
     public SocketIoService(Context applicationContext) {
         super();
@@ -57,18 +58,34 @@ public class SocketIoService extends Service {
         firebaseAuth = FirebaseAuth.getInstance();
         String email = firebaseAuth.getCurrentUser().getEmail();
 
+//        JSONObject jsonNameEmail = new JSONObject();
+//        try{
+//            jsonNameEmail.put("Name",myPhoneName);
+//            jsonNameEmail.put("Email",email);
+//        }catch(JSONException e){
+//            e.printStackTrace();
+//        }
+
         options = new IO.Options();
-        options.query = "email="+email;
+        options.query = "email="+email+
+                        "&phone="+"true"+
+                        "&phoneName="+myPhoneName;
         try{
-            socket = IO.socket("https://fonefinder.herokuapp.com", options);
-            //socket = IO.socket("http://192.168.1.172:8080", options);
+            //socket = IO.socket("https://fonefinder.herokuapp.com", options);
+            socket = IO.socket("http://192.168.0.9:8080", options);
         }catch(URISyntaxException e){
             throw new RuntimeException(e);
         }
 
+
         socket.connect();
         socket.on("ring request", makeRing);
         socket.on("location request", sendLocation);
+        //socket.emit("phoneConnected", jsonNameEmail);
+
+
+
+
 
         pm = (PowerManager)getApplicationContext().getSystemService(
                 Context.POWER_SERVICE);
@@ -88,6 +105,8 @@ public class SocketIoService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        //let WebUI know that i'm disconnecting
+        socket.emit("phoneDisconnected");
         socket.disconnect();
         stayAwake.release();
         if (firebaseAuth.getCurrentUser()!=null) {
@@ -169,6 +188,13 @@ public class SocketIoService extends Service {
 
 
 
+        }
+    };
+
+    private Emitter.Listener sendName = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            socket.emit("phoneConnected", myPhoneName);
         }
     };
 

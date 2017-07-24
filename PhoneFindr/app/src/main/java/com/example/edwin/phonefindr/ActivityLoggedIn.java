@@ -65,6 +65,7 @@ public class ActivityLoggedIn extends AppCompatActivity {
 
         SpannableStringBuilder str = new SpannableStringBuilder(content);
         int startPos = content.indexOf("https://fonefinder.herokuapp.com");
+        //int startPos = content.indexOf("https://192.168.100.232");
         str.setSpan(new ForegroundColorSpan(Color.RED),
                 startPos, startPos+32, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         welcomeMessage.setText(str);
