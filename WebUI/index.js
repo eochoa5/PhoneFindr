@@ -22,6 +22,8 @@ io.on('connection', function(socket){
 		//phone connection lets WebUI know that phone is Connected
 		if (socket.handshake.query.phone == "true"){
 
+			socket.phoneName = socket.handshake.query.phoneName;
+
 			for(i=0 ; i<users.length; i++){
 
 			if(socket.email == users[i].email && users[i].id != socket.id){
@@ -30,10 +32,20 @@ io.on('connection', function(socket){
 			}
 
 		}
+		else{
+			//check if our phone is connected when we connect 
+
+			for(i=0 ; i<users.length; i++){
+
+			if(socket.email == users[i].email && users[i].id != socket.id){
+				io.to(socket.id).emit('alreadyConnected', users[i].phoneName);
+				}
+			}
+
+		}
 
 
 		
-
 	users.push(socket);
 
 	socket.on('ring', function(data){
@@ -67,8 +79,7 @@ io.on('connection', function(socket){
 	socket.on('disconnect', function(){
 
 		console.log('a user has disconnected: ' + socket.id);
-		if(socket.handshake.query.phone == "true")
-			{
+		if(socket.handshake.query.phone == "true"){
 				console.log("a phone has disconnected");
 
 				for(i=0 ; i<users.length; i++){
@@ -77,6 +88,9 @@ io.on('connection', function(socket){
 						}
 				}
 			}
+
+
+		//remove from array
 
 		for(i=0 ; i<users.length; i++){
 
@@ -88,25 +102,7 @@ io.on('connection', function(socket){
 		
 
 	});
-
-	socket.on('phoneDisconnected', function(){
-		console.log('phone disconnected');
-	})
-
-	// socket.on('phoneConnected', function(data){
-	// 	console.log('Phone Connected');
-
-	// 	for(i=0 ; i<users.length; i++){
-
-	// 		if(data.Email == users[i].email && users[i].id != socket.id){
-	// 			console.log("socket.id");
-	// 			io.to(users[i].id).emit('isPhoneConnected', socket.handshake.query.Name);
-	// 			//find out how to do data.to, send the name
-	// 			//io.to(data.to).emit('isPhoneConnected', {lat: data.lat, lon: data.lon});
-	// 		}
-	// 	}
-
-	// });
+	
 
 });
 
