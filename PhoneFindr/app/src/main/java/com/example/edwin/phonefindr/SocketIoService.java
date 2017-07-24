@@ -58,14 +58,6 @@ public class SocketIoService extends Service {
         firebaseAuth = FirebaseAuth.getInstance();
         String email = firebaseAuth.getCurrentUser().getEmail();
 
-//        JSONObject jsonNameEmail = new JSONObject();
-//        try{
-//            jsonNameEmail.put("Name",myPhoneName);
-//            jsonNameEmail.put("Email",email);
-//        }catch(JSONException e){
-//            e.printStackTrace();
-//        }
-
         options = new IO.Options();
         options.query = "email="+email+
                         "&phone="+"true"+
@@ -81,7 +73,6 @@ public class SocketIoService extends Service {
         socket.connect();
         socket.on("ring request", makeRing);
         socket.on("location request", sendLocation);
-        //socket.emit("phoneConnected", jsonNameEmail);
 
 
 
@@ -104,9 +95,9 @@ public class SocketIoService extends Service {
 
     @Override
     public void onDestroy() {
+        socket.emit("phoneDisconnected");//let WebUI know that i'm disconnecting
         super.onDestroy();
-        //let WebUI know that i'm disconnecting
-        socket.emit("phoneDisconnected");
+
         socket.disconnect();
         stayAwake.release();
         if (firebaseAuth.getCurrentUser()!=null) {

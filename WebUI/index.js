@@ -26,7 +26,7 @@ io.on('connection', function(socket){
 			for(i=0 ; i<users.length; i++){
 
 			if(socket.email == users[i].email && users[i].id != socket.id){
-				io.to(users[i].id).emit('isPhoneConnected', socket.handshake.query.Name);
+				io.to(users[i].id).emit('phoneConnected', socket.handshake.query.Name);
 				}
 			}
 
@@ -68,6 +68,16 @@ io.on('connection', function(socket){
 	socket.on('disconnect', function(){
 
 		console.log('a user has disconnected: ' + socket.id);
+		if(socket.handshake.query.phone == "true")
+			{
+				console.log("a phone has disconnected");
+
+				for(i=0 ; i<users.length; i++){
+					if(socket.email == users[i].email && users[i].id != socket.id){
+						io.to(users[i].id).emit('phoneDisconnected');
+						}
+				}
+			}
 
 		for(i=0 ; i<users.length; i++){
 
@@ -75,6 +85,8 @@ io.on('connection', function(socket){
 				users.splice(i,1);
 			}
 		}
+
+		
 
 	});
 
