@@ -19,7 +19,7 @@ io.on('connection', function(socket){
 	socket.email = socket.handshake.query['email'];
 
 		
-		//phone connection lets WebUI know that phone is Connected
+		//phone connection lets WebUI know that phone is connected
 		if (socket.handshake.query.phone == "true"){
 
 			socket.phoneName = socket.handshake.query.phoneName;

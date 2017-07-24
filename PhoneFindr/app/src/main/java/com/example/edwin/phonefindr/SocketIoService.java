@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
@@ -42,7 +43,8 @@ public class SocketIoService extends Service {
     public static MediaPlayer mPlayer;
     public static NotificationManager mNotificationManager;
     private AudioManager audioManager;
-    private String myPhoneName = "myPhone";
+    private String myPhoneName = "Unknown device";
+    public static boolean okToRestart = true;
 
     public SocketIoService(Context applicationContext) {
         super();
@@ -54,17 +56,19 @@ public class SocketIoService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
+        okToRestart = true;
 
         firebaseAuth = FirebaseAuth.getInstance();
         String email = firebaseAuth.getCurrentUser().getEmail();
 
+        myPhoneName = Build.MANUFACTURER  + " " + Build.MODEL;
         options = new IO.Options();
         options.query = "email="+email+
                         "&phone="+"true"+
                         "&phoneName="+myPhoneName;
         try{
-            //socket = IO.socket("https://fonefinder.herokuapp.com", options);
-            socket = IO.socket("http://192.168.0.9:8080", options);
+            socket = IO.socket("https://fonefinder.herokuapp.com", options);
+            //socket = IO.socket("http://192.168.1.172:8080", options);
         }catch(URISyntaxException e){
             throw new RuntimeException(e);
         }
@@ -73,10 +77,6 @@ public class SocketIoService extends Service {
         socket.connect();
         socket.on("ring request", makeRing);
         socket.on("location request", sendLocation);
-
-
-
-
 
         pm = (PowerManager)getApplicationContext().getSystemService(
                 Context.POWER_SERVICE);
@@ -95,12 +95,11 @@ public class SocketIoService extends Service {
 
     @Override
     public void onDestroy() {
-        socket.emit("phoneDisconnected");//let WebUI know that i'm disconnecting
         super.onDestroy();
 
         socket.disconnect();
         stayAwake.release();
-        if (firebaseAuth.getCurrentUser()!=null) {
+        if (firebaseAuth.getCurrentUser()!=null && okToRestart) {
             Intent broadcastIntent = new Intent("com.example.edwin.phonefindr.ServiceRestarter");
             sendBroadcast(broadcastIntent);
         }
@@ -182,12 +181,6 @@ public class SocketIoService extends Service {
         }
     };
 
-    private Emitter.Listener sendName = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            socket.emit("phoneConnected", myPhoneName);
-        }
-    };
 
     @Override
     public boolean onUnbind(Intent intent) {
