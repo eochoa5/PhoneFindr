@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         if(firebaseAuth.getCurrentUser() != null){
             Intent i = new Intent(MainActivity.this, ActivityLoggedIn.class);
-            startActivity(i);
+                   startActivity(i);
             finish();
         }
 

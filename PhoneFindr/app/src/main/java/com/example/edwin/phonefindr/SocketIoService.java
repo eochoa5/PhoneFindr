@@ -128,9 +128,9 @@ public class SocketIoService extends Service {
 
             NotificationCompat.Builder mBuilder =
                     new NotificationCompat.Builder(getApplicationContext())
-                            .setSmallIcon(R.mipmap.ic_launcher)
+                            .setSmallIcon(R.drawable.ic_notification)
                             .setContentTitle("PhoneFindr")
-                            .addAction(R.mipmap.ic_stop,"Stop",pendingIntent)
+                            .addAction(R.drawable.ic_stop,"Stop",pendingIntent)
                             .setPriority(Notification.PRIORITY_MAX);
             mNotificationManager =
                     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
