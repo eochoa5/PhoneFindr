@@ -91,14 +91,30 @@
           var pLon = parseFloat(data.lon).toFixed(3);
 
           var latlng = new google.maps.LatLng(pLat, pLon);
+		
+	//convert lat and lon to address
+	
+	var geocoder  = new google.maps.Geocoder();             
+    	var location  = new google.maps.LatLng(34.065,-118.168);         
+    geocoder.geocode({'latLng': location}, function (results, status) {
+
+        if(status == google.maps.GeocoderStatus.OK) {         
+          var add=results[0].formatted_address;        
+		
+	var contentString = "<h5>Address:"+add+"</h5>" +
+          "<h5>Coordinates: " +pLat+","+pLon+"</h5><br>"+
+          "<a target='_blank' href='https://maps.google.com/maps?daddr="+pLat+","+pLon+"'>Get Directions</a>";
+          infowindow.setContent(contentString);
+
+        }
+
+    });
+	//
           
           marker.setPosition(latlng);
           marker.setMap(map);
           marker.setTitle("Your phone is here! click for more info");
-          var contentString = "<h5>Address: Converted address goes here</h5>" +
-          "<h5>Coordinates: " +pLat+","+pLon+"</h5><br>"+
-          "<a target='_blank' href='https://maps.google.com/maps?daddr="+pLat+","+pLon+"'>Get Directions</a>";
-          infowindow.setContent(contentString);
+    
           map.setCenter(marker.getPosition());
         }
       });
