@@ -68,7 +68,6 @@ public class SocketIoService extends Service {
                         "&phoneName="+myPhoneName;
         try{
             socket = IO.socket("https://fonefinder.herokuapp.com", options);
-            //socket = IO.socket("http://192.168.1.172:8080", options);
         }catch(URISyntaxException e){
             throw new RuntimeException(e);
         }

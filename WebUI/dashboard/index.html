@@ -87,21 +87,21 @@
         else
         {
           $('#locationButton').html('Phone Found!');
-          var pLat = parseFloat(data.lat).toFixed(3);
-          var pLon = parseFloat(data.lon).toFixed(3);
+          var pLat = parseFloat(data.lat);
+          var pLon = parseFloat(data.lon);
 
           var latlng = new google.maps.LatLng(pLat, pLon);
 		
 	//convert lat and lon to address
 	
-	var geocoder  = new google.maps.Geocoder();             
-    	var location  = new google.maps.LatLng(34.065,-118.168);         
-    geocoder.geocode({'latLng': location}, function (results, status) {
+	  var geocoder  = new google.maps.Geocoder();             
+    	     
+    geocoder.geocode({'latLng': latlng}, function (results, status) {
 
         if(status == google.maps.GeocoderStatus.OK) {         
           var add=results[0].formatted_address;        
 		
-	var contentString = "<h5>Address:"+add+"</h5>" +
+	        var contentString = "<h5>Address: "+add+"</h5>" +
           "<h5>Coordinates: " +pLat+","+pLon+"</h5><br>"+
           "<a target='_blank' href='https://maps.google.com/maps?daddr="+pLat+","+pLon+"'>Get Directions</a>";
           infowindow.setContent(contentString);

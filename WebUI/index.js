@@ -14,7 +14,7 @@ app.use(express.static(__dirname));
 
 io.on('connection', function(socket){
 
-	console.log('a user has connected: ' + socket.id);
+	//console.log('a user has connected: ' + socket.id);
 	
 	socket.email = socket.handshake.query['email'];
 
@@ -78,9 +78,9 @@ io.on('connection', function(socket){
 
 	socket.on('disconnect', function(){
 
-		console.log('a user has disconnected: ' + socket.id);
+		//console.log('a user has disconnected: ' + socket.id);
 		if(socket.handshake.query.phone == "true"){
-				console.log("a phone has disconnected");
+				//console.log("a phone has disconnected");
 
 				for(i=0 ; i<users.length; i++){
 					if(socket.email == users[i].email && users[i].id != socket.id){
