@@ -51,9 +51,9 @@ io.on('connection', function(socket){
 	socket.on('ring', function(data){
 
 		for(i=0 ; i<users.length; i++){
-			if(users[i].email == data && users[i].id != socket.id){
+			if(users[i].email == data.em && users[i].id != socket.id){
 
-				io.to(users[i].id).emit('ring request', socket.id);
+				io.to(users[i].id).emit('ring request', data.name);
 			}
 
 		}
