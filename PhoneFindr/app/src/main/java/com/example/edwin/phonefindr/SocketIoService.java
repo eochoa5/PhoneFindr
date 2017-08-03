@@ -8,8 +8,10 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Build;
@@ -20,6 +22,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
 import com.example.edwin.phonefindr.utils.GPSTracker;
+import com.example.edwin.phonefindr.utils.SleepReceiver;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
@@ -39,12 +42,13 @@ public class SocketIoService extends Service {
     private IO.Options options;
     private PowerManager pm;
     private PowerManager.WakeLock wl;
-    private PowerManager.WakeLock stayAwake;
+    public static  PowerManager.WakeLock stayAwake;
     public static MediaPlayer mPlayer;
     public static NotificationManager mNotificationManager;
     private AudioManager audioManager;
     private String myPhoneName = "Unknown device";
     public static boolean okToRestart = true;
+    private SleepReceiver sleepReceiver;
 
     public SocketIoService(Context applicationContext) {
         super();
@@ -83,7 +87,15 @@ public class SocketIoService extends Service {
         wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "MyWakeLock");
 
         stayAwake = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakeLock2");
-        stayAwake.acquire();
+        //stayAwake.acquire();
+
+        //check when screen turns off to acquire partial lock and release when on
+         sleepReceiver = new SleepReceiver();
+        IntentFilter lockFilter = new IntentFilter();
+        lockFilter.addAction(Intent.ACTION_SCREEN_ON);
+        lockFilter.addAction(Intent.ACTION_SCREEN_OFF);
+        registerReceiver(sleepReceiver, lockFilter);
+        //
 
         mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.sound);
         audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
@@ -97,7 +109,10 @@ public class SocketIoService extends Service {
         super.onDestroy();
 
         socket.disconnect();
-        stayAwake.release();
+        unregisterReceiver(sleepReceiver);
+
+        //stayAwake.release();
+
         if (firebaseAuth.getCurrentUser()!=null && okToRestart) {
             Intent broadcastIntent = new Intent("com.example.edwin.phonefindr.ServiceRestarter");
             sendBroadcast(broadcastIntent);
