@@ -10,7 +10,7 @@
     android:paddingRight="5dp"
     android:paddingTop="5dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.edwin.phonefindr.MainActivity"
+    tools:context="com.eochoa5.edwin.phonefindr.MainActivity"
     tools:showIn="@layout/activity_main">
 
     <LinearLayout
