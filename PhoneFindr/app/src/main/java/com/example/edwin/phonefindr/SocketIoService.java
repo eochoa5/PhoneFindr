@@ -132,10 +132,19 @@ public class SocketIoService extends Service {
 
             switch(name) {
                 case "iphone" :
+                    mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.iphone2);
+                    break;
+                case "iphone2" :
+                    mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.iphone3);
+                    break;
+                case "iphone3" :
                     mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.iphone);
                     break;
                 case "arnold" :
                     mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.arnold);
+                    break;
+                case "rick" :
+                    mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.rickroll);
                     break;
                 case "siren1" :
                     mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.siren1);
@@ -153,7 +162,7 @@ public class SocketIoService extends Service {
                     mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.siren3);
                     break;
                 default :
-                    mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.iphone);
+                    mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.iphone2);
             }
 
 
