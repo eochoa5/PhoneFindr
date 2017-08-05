@@ -3,7 +3,6 @@ package com.example.edwin.phonefindr.utils;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.widget.Toast;
 
 import com.example.edwin.phonefindr.SocketIoService;
 
@@ -16,13 +15,15 @@ public class SleepReceiver extends BroadcastReceiver {
         if (intent != null && intent.getAction() != null)
         {
             if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
-                SocketIoService.stayAwake.release();
+                if(!SocketIoService.mPlayer.isPlaying()) {
+                    SocketIoService.stayAwake.release();
+                }
                 System.out.println("is held: " + SocketIoService.stayAwake.isHeld());
             }
             else if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
                 SocketIoService.stayAwake.acquire();
 
-               System.out.println("is held: " + SocketIoService.stayAwake.isHeld());
+                System.out.println("is held: " + SocketIoService.stayAwake.isHeld());
 
 
             }

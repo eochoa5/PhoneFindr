@@ -8,7 +8,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -68,10 +67,12 @@ public class SocketIoService extends Service {
         myPhoneName = Build.MANUFACTURER  + " " + Build.MODEL;
         options = new IO.Options();
         options.query = "email="+email+
-                        "&phone="+"true"+
-                        "&phoneName="+myPhoneName;
+                "&phone="+"true"+
+                "&phoneName="+myPhoneName;
         try{
             socket = IO.socket("https://fonefinder.herokuapp.com", options);
+            //socket = IO.socket("http://192.168.1.172:8080", options);
+
         }catch(URISyntaxException e){
             throw new RuntimeException(e);
         }
@@ -90,14 +91,14 @@ public class SocketIoService extends Service {
         //stayAwake.acquire();
 
         //check when screen turns off to acquire partial lock and release when on
-         sleepReceiver = new SleepReceiver();
+        sleepReceiver = new SleepReceiver();
         IntentFilter lockFilter = new IntentFilter();
         lockFilter.addAction(Intent.ACTION_SCREEN_ON);
         lockFilter.addAction(Intent.ACTION_SCREEN_OFF);
         registerReceiver(sleepReceiver, lockFilter);
         //
 
-        mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.sound);
+        mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.siren1);
         audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
 
         return START_STICKY;
@@ -123,10 +124,39 @@ public class SocketIoService extends Service {
         @Override
         public void call(final Object... args){
 
-        wl.acquire();
+            wl.acquire();
 
-        if(!mPlayer.isPlaying()){
-            mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.sound);
+            String name = args[0].toString();
+
+            if(mPlayer.isPlaying()){mPlayer.stop();}
+
+            switch(name) {
+                case "iphone" :
+                    mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.iphone);
+                    break;
+                case "arnold" :
+                    mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.arnold);
+                    break;
+                case "siren1" :
+                    mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.siren1);
+                    break;
+                case "police1" :
+                    mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.police);
+                    break;
+                case "siren2" :
+                    mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.siren2);
+                    break;
+                case "police2" :
+                    mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.police2);
+                    break;
+                case "siren3" :
+                    mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.siren3);
+                    break;
+                default :
+                    mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.iphone);
+            }
+
+
             audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
             audioManager.setMode(AudioManager.MODE_IN_CALL);
             audioManager.setSpeakerphoneOn(true);
@@ -153,10 +183,7 @@ public class SocketIoService extends Service {
             //end of notification code
 
 
-
-        }
-
-        wl.release();
+            wl.release();
 
         }
     };
@@ -166,9 +193,9 @@ public class SocketIoService extends Service {
         public void call(final Object... args){
 
             wl.acquire();
-             if (Looper.myLooper()==null) {
-                 Looper.prepare();
-             }
+            if (Looper.myLooper()==null) {
+                Looper.prepare();
+            }
             gps = new GPSTracker(getApplicationContext());
 
             String lat = gps.getLatitude()+"";
