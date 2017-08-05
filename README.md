@@ -6,3 +6,5 @@ do what it's supposed to do but we don't guarantee it because the phone might ha
 Install it. Sign up/sign in. 
 As long as you are signed in on the app, you can always go to https://fonefinder.herokuapp.com/ at anytime and login and click 
 on either 'Make Phone Ring' or 'Show Phone's Location'. 
+
+Google Play link: https://play.google.com/store/apps/details?id=com.eochoa5.edwin.phonefindr
